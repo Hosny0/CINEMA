@@ -1,0 +1,31 @@
+﻿@using CINEMA.Model_view
+@model ModelAndActorMovieVM
+<div class=" container">
+    <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="/images/movies/@Model.Movie.ImgUrl" class="img-fluid rounded-start" alt="...">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text"><small class="@Model.Movie.Name"</small></p>
+                    <p class="card-text"><small class="@Model.Movie.Description"</small></p>
+                    <p class="card-text"><small class="@Model.Movie.Category.Name"</small></p>
+                    <p class="card-text"><small class="@Model.Movie.Cinema"</small></p>
+                    <p class="card-text"><small class="@Model.Movie.StartDate"</small></p>
+                    <p class="card-text"><small class="@Model.Movie.EndDate"</small></p>
+                    <p class="card-text"><small class="@Model.Movie.MovieStatus"</small></p>
+                    <p class="card-text"><small class="@Model.Movie.TrailerUrl"</small></p>
+
+                    @foreach (var item in Model.Movie.Actors)
+                    {
+                        <img src="/images/cast/@Model.Movie.Actors">
+
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

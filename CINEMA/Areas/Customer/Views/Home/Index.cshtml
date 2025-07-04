@@ -1,0 +1,22 @@
+﻿@model List<Movie>
+
+<div class="container py-4">
+    <div class="row g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <img src="~/images/Movies/@item.ImgUrl" class="card-img-top" alt="@item.Name" style="height: 300px; object-fit: cover;">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title text-primary">@item.Name</h5>
+                        <p class="card-text mb-1"><strong>Category:</strong> @item.Category.Name</p>
+                        <p class="card-text mb-3"><strong>Cinema:</strong> @item.Cinema.Name</p>
+                        <div class="mt-auto text-center">
+                            <a class="btn btn-dark w-100" href="/Customer/Home/Details/@item.Id">Show Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
