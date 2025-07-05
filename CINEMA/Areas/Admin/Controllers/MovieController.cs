@@ -17,20 +17,20 @@ namespace CINEMA.Areas.Admin.Controllers
             var Movie = _context.Movies.Include(e => e.Category);
             return View(Movie.ToList());
         }
-        [HttpGet]
-        public IActionResult Create()
-        {
-            var categories = _context.Categories;
-            var Cinemas = _context.Cinemas;
-            var Actors = _context.Actors;
-            CategoryVM categoryVM = new()
-            {
-                Categories =  categories,
-                Cinemas = Cinemas,
-                Actors = Actors
-            };
-            return View(categoryVM);
-        }
-
+     //   [HttpGet]
+     //   public IActionResult Create()
+     //   {
+     //       var categories = _context.Categories;
+     //       var Cinemas = _context.Cinemas;
+     //       var Actors = _context.Actors;
+     //       CategoryVM categoryVM = new()
+     //       {
+     //           Categories =  categories,
+     //           Cinemas = Cinemas,
+     //           Actors = Actors
+     //       };
+     //       return View(categoryVM);
+     //   }
+     //
     }
 }

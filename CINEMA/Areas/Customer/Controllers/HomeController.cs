@@ -29,21 +29,22 @@ namespace CINEMA.Areas.Customer.Controllers
             return View(Movies);
 
         }
-        public IActionResult Details(int id)
+        public IActionResult Details( int id)
         {
             var Movie = _context.Movies.Include(e => e.Cinema).Include(e => e.Category).FirstOrDefault(e => e.Id == id);
-            var ActorMovie = _context.ActorMovies.Include(e => e.Actor).Where(e => e.MoviesId == id);
-            if (Movie == null)
-            {
-                return NotFound();
+            if (Movie is not null)
+            {   
+             var RelatedMovies=   _context.Movies.Where(e => e.CategoryId == Movie.CategoryId && e.Id != Movie.Id).Skip(0).Take(4);
+                var MovieWithRelatedMovies = new MovieWithRelatedMoviesVM()
+                { 
+                    Movie = Movie,
+                    RelatedMovies = RelatedMovies.ToList()
+                };
+                return View(MovieWithRelatedMovies);
             }
-            var ModelAndActorMovie = new ModelAndActorMovieVM()
-            {
-                Movie = Movie,
-                ActorMovies = ActorMovie.ToList()
-            };
+          
 
-            return View(ModelAndActorMovie);
+            return NotFound();
         }
 
         public IActionResult Privacy()
