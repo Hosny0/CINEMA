@@ -1,36 +1,48 @@
-﻿@model IEnumerable<Category>
+﻿@model IEnumerable<Movie>
 
 <div class="container">
     <div class="row mb-3 align-items-center my-3">
         <div class="col-md-6">
-            <h2 class="display-6">All Categories</h2>
+            <h2 class="display-6">All Movies</h2>
         </div>
         <div class="col-md-6 text-md-end text-start mt-2 mt-md-0">
-            <a href="/Admin/Category/Create" class="btn btn-success">Create</a>
+            <a href="/Admin/Movie/Create" class="btn btn-success">Create</a>
         </div>
     </div>
 
     <div class="row">
         <div class="col-12">
-
             <table class="table table-hover">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">TrailerUrl</th>
+                        <th scope="col">StartDate</th>
+                        <th scope="col">EndDate</th>
+                        <th scope="col">MovieStatus</th>
+                        <th scope="col">Category name</th>
                         <th class="text-end" scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach(var item in Model)
+                    @foreach (var item in Model)
                     {
                         <tr>
                             <th scope="row">@item.Id</th>
                             <td>@item.Name</td>
-                        <td class="text-end">
-                                <a href="/Admin/Category/Edite?Id=@item.Id" type="button" class="btn btn-warning">Edit</a>
-                                <a href="/Admin/Category/Delete/@item.Id" class="btn btn-danger btn-delete" data-id="">Delete</a>
-                        </td>
+                            <td>@item.Price.ToString("C")</td>
+                            <td>@item.TrailerUrl</td>
+                            <td>@item.StartDate.ToShortDateString()</td>
+                            <td>@item.EndDate.ToShortDateString()</td>
+                            <td>@item.MovieStatus</td>
+                            <td>@item.Category?.Name</td>
+                            <td class="text-end">
+                                <a href="/Admin/Movie/Edite/@item.Id" class="btn btn-warning">Edit</a>
+                                <a href="/Admin/Movie/Details/@item.Id" class="btn btn-info">Details</a>
+                                <a href="/Admin/Movie/Delete/@item.Id" class="btn btn-danger btn-delete">Delete</a>
+                            </td>
                         </tr>
                     }
                 </tbody>

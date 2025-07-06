@@ -1,0 +1,27 @@
+﻿@model Movie
+<section class="py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src=/images/movies/@Model.ImgUrl alt="..." /></div>
+            <div class="col-md-6">
+                <div class="small mb-1">@Model.Category.Name</div>
+                <h1 class="display-5 fw-bolder">@Model.Name</h1>
+                <div class="fs-5 mb-5">
+                    <span class="text-decoration">@Model.Cinema.Name</span>
+                </div>
+                <div class="fs-5 mb-5">
+                    <span class="text-decoration">@Model.Description</span>
+                </div>
+                <div class="fs-5 mb-5">
+                    <span class="text-decoration">@Model.Price.ToString("C")</span>
+                </div>
+
+                <div class="fs-5 mb-5">
+                    <span class="text-decoration">@Model.TrailerUrl</span>
+                </div>
+                <p class=@Model.Description</p>
+                
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,74 @@
+﻿@using CINEMA.Model_view;
+
+@model CategoryWithCinemaVM
+<div class="container">
+    <div class="row mb-3 align-items-center my-3">
+        <div class="col-md-12">
+            <h2 class="display-6">Create New Movie</h2>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-12">
+            <form action="Create" method="post">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="Name">
+                </div>
+                <div class="mb-3">
+                    <label for="Price" class="form-label">Price</label>
+                    <input type="number" class="form-control" id="Price" name="Price">
+                </div>
+                <div class="mb-3">
+                    <label for="ImgUrl" class="form-label">ImgUrl</label>
+                    <input type="text" class="form-control" id="ImgUrl" name="ImgUrl">
+                </div>
+                <div class="mb-3">
+                    <label for="TrailerUrl" class="form-label">TrailerUrl</label>
+                    <input type="text" class="form-control" id="TrailerUrl" name="TrailerUrl">
+                </div>
+                <div class="mb-3">
+                    <label for="StartDate" class="form-label">StartDate</label>
+                    <input type="date" class="form-control" id="StartDate" name="StartDate">
+                </div>
+                <div class="mb-3">
+                    <label for="EndDate" class="form-label">EndDate</label>
+                    <input type="date" class="form-control" id="EndDate" name="EndDate">
+                </div>
+                <div class="mb-3">
+                    <label for="CinemaId" class="form-label">CinemaId</label>
+                    <select name="CinemaId" class="form-select">
+                        @foreach (var item in Model.Cinemas)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="CategoryId" class="form-label">CategoryId</label>
+                    <select name="CategoryId" class="form-select">
+                        @foreach (var item in Model.Categories)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="MovieStatus" class="form-label">MovieStatus</label>
+                    <select name="MovieStatus" class="form-select"> 
+                        <option value="Upcoming">Upcoming</option>
+                        <option value="Available">Available</option>
+                        <option value="Expired">Expired</option>
+                        </select>
+                </div>
+               
+              
+                <div class="mb-3">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
