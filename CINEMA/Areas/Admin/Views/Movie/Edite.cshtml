@@ -32,6 +32,10 @@
                     <input type="date" class="form-control" id="StartDate" name="StartDate" value="@Model.Movie.StartDate">
                 </div>
                 <div class="mb-3">
+                    <label for="Description" class="form-label">Description</label>
+                    <input type="text" class="form-control" id="Description" name="Description" value="@Model.Movie.Description">
+                </div>
+                <div class="mb-3">
                     <label for="EndDate" class="form-label">EndDate</label>
                     <input type="date" class="form-control" id="EndDate" name="EndDate" value="@Model.Movie.EndDate">
                 </div>
@@ -40,7 +44,13 @@
                     <select name="CategoryId" class="form-select">
                         @foreach (var item in Model.Cinemas)
                         {
-                            <option value="@item.Id">@item.Name</option>
+                            @if(item.Id == Model.Movie.CinemaId)
+                            {
+                            <option value="@item.Id" selected>@item.Name</option>
+
+                            }
+                            <option value="@item.Id" >@item.Name</option>
+
                         }
                     </select>
                 </div>
@@ -50,6 +60,11 @@
                     <select name="CategoryId" class="form-select">
                         @foreach (var item in Model.Categories)
                         {
+                            @if (item.Id == Model.Movie.CategoryId)
+                            {
+                                <option value="@item.Id" selected>@item.Name</option>
+
+                            }
                             <option value="@item.Id">@item.Name</option>
                         }
                     </select>

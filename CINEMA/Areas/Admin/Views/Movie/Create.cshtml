@@ -36,6 +36,10 @@
                     <input type="date" class="form-control" id="EndDate" name="EndDate">
                 </div>
                 <div class="mb-3">
+                    <label for="Description" class="form-label">Description</label>
+                    <input type="text" class="form-control" id="Description" name="Description">
+                </div>
+                <div class="mb-3">
                     <label for="CinemaId" class="form-label">CinemaId</label>
                     <select name="CinemaId" class="form-select">
                         @foreach (var item in Model.Cinemas)

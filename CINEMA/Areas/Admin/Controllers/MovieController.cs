@@ -70,7 +70,13 @@ namespace CINEMA.Areas.Admin.Controllers
                 return View(Movie);
             
         }
-      
+        public IActionResult Delete([FromRoute] int Id)
+        {
+            var Movie = _context.Movies.Find(Id); 
+            _context.Remove(Movie);
+            _context.SaveChanges();
+            return RedirectToAction(nameof(Index));
+        }
     }
 
 }
