@@ -1,3 +1,12 @@
+using CINEMA.Data;
+using CINEMA.Models;
+using CINEMA.Repositories;
+using CINEMA.Repositories.IRepositories;
+using CINEMA.Utility;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
+
 namespace CINEMA
 {
     public class Program
@@ -8,6 +17,25 @@ namespace CINEMA
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<ApplicationDbContext>(
+                option=>option.UseSqlServer(builder.Configuration.GetConnectionString("defaultConnection"))
+                );
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
+                options =>
+                {
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.SignIn.RequireConfirmedEmail = true;
+                    options.SignIn.RequireConfirmedEmail = true;
+
+                }
+                )
+                .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
+
 
             var app = builder.Build();
 

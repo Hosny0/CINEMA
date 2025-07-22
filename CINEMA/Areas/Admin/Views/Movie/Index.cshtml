@@ -1,5 +1,22 @@
 ﻿@model IEnumerable<Movie>
 
+    @section scripts{
+    @if (@TempData["success_notification"] is not null)
+    {
+        <script>
+            toastr.Success('@TempData["success_notification"]')
+        </script>
+
+    }
+    else if (@TempData["Error_notification"] is not null)
+    {
+        <script>
+            toastr.Success('@TempData["Error_notification"]')
+        </script>
+    }
+
+  @*  <partial name="_NotificationPartial.cshtml" >*@
+    }
 <div class="container">
     <div class="row mb-3 align-items-center my-3">
         <div class="col-md-6">
@@ -39,7 +56,7 @@
                             <td>@item.MovieStatus</td>
                             <td>@item.Category?.Name</td>
                             <td class="text-end">
-                                <a href="/Admin/Movie/Edite/@item.Id" class="btn btn-warning">Edit</a>
+                                <a href="/Admin/Movie/Edit/@item.Id" class="btn btn-warning">Edit</a>
                                 <a href="/Admin/Movie/Details/@item.Id" class="btn btn-info">Details</a>
                                 <a href="/Admin/Movie/Delete/@item.Id" class="btn btn-danger btn-delete">Delete</a>
                             </td>
