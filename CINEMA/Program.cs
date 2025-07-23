@@ -35,6 +35,7 @@ namespace CINEMA
                 .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
             builder.Services.AddTransient<IEmailSender, EmailSender>();
+            builder.Services.AddScoped<IUserOTPRepository, UserOTPRepository>();
 
 
             var app = builder.Build();

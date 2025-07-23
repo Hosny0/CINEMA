@@ -17,6 +17,7 @@ namespace CINEMA.Data
         public DbSet<Cinema> Cinemas { get; set; }
         public DbSet<Actor> Actors { get; set; }
         public DbSet<ActorMovies> ActorMovies { get; set; }
+        public DbSet<UserOTP> UserOTPs { get; set; }
 
         public ApplicationDbContext()
         {
@@ -29,6 +30,5 @@ namespace CINEMA.Data
             optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=CINEMA;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;");
         }
    
-public DbSet<CINEMA.Model_view.RegisterVM> RegisterVM { get; set; } = default!;
     }
 }

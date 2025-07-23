@@ -1,10 +1,13 @@
 ﻿using CINEMA.Model_view;
 using CINEMA.Models;
+using CINEMA.Repositories.IRepositories;
+using CINEMA.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using Index = Microsoft.EntityFrameworkCore.Metadata.Internal.Index;
 
 
@@ -17,12 +20,15 @@ namespace CINEMA.Areas.Identity.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailSender _emailSender;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IUserOTPRepository _userOTPRepository;
 
-        public AccountController(UserManager<ApplicationUser> userManager, IEmailSender emailSender,SignInManager<ApplicationUser>signInManager)
+        public AccountController(UserManager<ApplicationUser> userManager, IEmailSender emailSender,SignInManager<ApplicationUser>signInManager, IUserOTPRepository userOTPRepository)
         {
             _userManager = userManager;
             _emailSender = emailSender;
             _signInManager = signInManager;
+            _userOTPRepository = userOTPRepository;
+
         }
         public IActionResult Register()
         {
@@ -135,7 +141,143 @@ namespace CINEMA.Areas.Identity.Controllers
             TempData["success-notification"] = "Logout Successfully";
             return RedirectToAction(nameof(Index), "Home", new { area = "Customer" });
         }
+        public IActionResult ResendEmailConfirmation()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> ResendEmailConfirmation(ResendEmailConfirmationVM resendEmailConfirmationVM)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(resendEmailConfirmationVM);
+            }
 
+            var user = await _userManager.FindByEmailAsync(resendEmailConfirmationVM.EmailOrUserName) ?? await _userManager.FindByNameAsync(resendEmailConfirmationVM.EmailOrUserName);
+
+            if (user is not null)
+            {
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var link = Url.Action(nameof(ConfirmEmail), "Account", new { area = "Identity", token = token, userId = user.Id }, Request.Scheme);
+                await _emailSender.SendEmailAsync(user.Email!, "Confirm Your Account", $"<h1>Confirm Your Account By Clicking <a href='{link}'>Here</a></h1>");
+            }
+
+            // Send msg
+            TempData["success-notification"] = "Confirm Your Account Again!";
+            return RedirectToAction(nameof(Index), "Home", new { area = "Customer" });
+        }
+        public IActionResult ForgetPassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ForgetPassword(ForgetPasswordVM forgetPasswordVM)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(forgetPasswordVM);
+            }
+            var user = await _userManager.FindByEmailAsync(forgetPasswordVM.EmailOrUserName) ?? await _userManager.FindByNameAsync(forgetPasswordVM.EmailOrUserName);
+
+            var userOTP = await _userOTPRepository.GetAsync(e => e.ApplicationUserId == user.Id);
+
+            var totalOTPs = userOTP.Count(e => (e.Date.Day == DateTime.UtcNow.Day) && (e.Date.Month == DateTime.UtcNow.Month) && (e.Date.Year == DateTime.UtcNow.Year));
+
+            if (totalOTPs < 3)
+            {
+                if (user is not null)
+                {
+                    var OTPNumber = new Random().Next(1000, 9999);
+                    await _emailSender.SendEmailAsync(user.Email!, "Reset Password", $"<h1>Reset Password Using OTP Number {OTPNumber}</h1>");
+
+                    await _userOTPRepository.CreateAsync(new()
+                    {
+                        Code = OTPNumber.ToString(),
+                        Date = DateTime.UtcNow,
+                        ExpirationDate = DateTime.UtcNow.AddHours(1),
+                        ApplicationUserId = user.Id
+                    });
+                    await _userOTPRepository.CommitAsync();
+                }
+
+                TempData["RedirectToAction"] = Guid.NewGuid().ToString();
+                return RedirectToAction(nameof(ResetPassword), new { userId = user.Id! });
+            }
+
+            // Send msg
+            TempData["error-notification"] = "Too Many Request, Please try again Later";
+            return View(forgetPasswordVM);
+        }
+
+        public IActionResult ResetPassword(string userId)
+        {
+            if (TempData["RedirectToAction"] is not null)
+            {
+                if (userId is not null)
+                {
+                    return View(new ResetPasswordVM()
+                    {
+                        UserId = userId
+                    });
+                }
+
+            }
+
+            return BadRequest();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordVM resetPasswordVM)
+        {
+            var userOTP = (await _userOTPRepository.GetAsync(e => e.ApplicationUserId == resetPasswordVM.UserId)).OrderBy(e => e.Id).LastOrDefault();
+
+            if (userOTP is not null)
+            {
+                if (DateTime.UtcNow < userOTP.ExpirationDate && !userOTP.Status && userOTP.Code == resetPasswordVM.Code)
+                {
+                    TempData["RedirectToAction"] = Guid.NewGuid().ToString();
+                    return RedirectToAction(nameof(ChangePassword), new { userId = userOTP.ApplicationUserId! });
+                }
+            }
+
+            // Error
+            ModelState.AddModelError(string.Empty, "Invalid Code");
+            return View(resetPasswordVM);
+        }
+        public IActionResult ChangePassword(string userId)
+        {
+            if (TempData["RedirectToAction"] is not null)
+            {
+                return View(new ChangePasswordVM()
+                {
+                    UserId = userId
+                });
+            }
+
+            return BadRequest();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordVM changePasswordVM)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(changePasswordVM);
+            }
+
+            var user = await _userManager.FindByIdAsync(changePasswordVM.UserId);
+
+            if (user is not null)
+            {
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                await _userManager.ResetPasswordAsync(user, token, changePasswordVM.Password);
+
+                // Send msg
+                TempData["success-notification"] = "Reset Password Successfully";
+                return RedirectToAction(nameof(Index), "Home", new { area = "Customer" });
+            }
+
+            return NotFound();
+        }
     }
 }
